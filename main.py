@@ -33,7 +33,7 @@ def text_front(surf, text, size, x, y):
 # функция, отвечающая за содержимое экрана конца игры
 def screen_of_the_end():
     screen.blit(background, [0, 0])
-    text_front(screen, "Дабы начать игру, нажмите любую клавишу!", 35, W / 2, H * 1 / 4)
+    text_front(screen, "Дабы начать игру, нажмите SPACE!", 35, W / 2, H * 1 / 4)
     text_front(screen, str(score), 50, W / 2, H * 2 / 3)
     pygame.display.flip()
     waiting = True
@@ -42,8 +42,9 @@ def screen_of_the_end():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.KEYUP:
-                waiting = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    waiting = False
 
 
 class Player(pygame.sprite.Sprite):
@@ -136,7 +137,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x += dx * self.speed_x
         self.rect.y += dy * self.speed_y
 
-    # отдельная функция рслучайного появления Врага для цикла hit_3
+    # отдельная функция случайного появления Врага для цикла hit_3
     def randomize(self):
         self.rect.x = random.randrange(0, W - self.rect.width)
         self.rect.y = random.randrange(0, H - self.rect.height)
@@ -160,6 +161,7 @@ running = True
 while running:
     if game_over:
         screen_of_the_end()
+        score = 0  # обнуление счётчика после начала новой игры
         game_over = False
         all_sprites = pygame.sprite.Group()
         player = Player()
@@ -197,9 +199,5 @@ while running:
 pygame.quit()
 
 ''' ДОРАБОТАТЬ: 
-   1) Обнуление счётчика
-   2) Передвижение Trap вверх-виз
-   3) Начало игры при нажатии на клавишу "SPACE"
-   4) Выход из игры при нажатии "Q"
-   5) Unittests + Docker 
+   1) Передвижение Trap вверх-виз
    '''
