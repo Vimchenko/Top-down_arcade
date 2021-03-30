@@ -8,7 +8,7 @@ pygame.init()
 pygame.mixer.init()
 # настройка экрана
 W = 700
-H = 650
+H = 700
 # частота кадров в секунду
 FPS = 60
 # определили оттенок чёрного цвета (для текста)
@@ -88,11 +88,15 @@ class Player(pygame.sprite.Sprite):
 
 
 class Trap(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, pace=10, turn_after=67):
         super().__init__()
         self.image = trap_file
         self.rect = self.image.get_rect()
         self.radius = 6
+        self.direction = -1
+        self.pace_count = 0
+        self.turn_after = turn_after
+        self.pace_size = pace
         trap_file.convert_alpha()
 
         self.rect.x = random.randrange(0, W - self.rect.width)
@@ -103,12 +107,17 @@ class Trap(pygame.sprite.Sprite):
         self.moving = True
 
     def horizontal_movement(self):
-        if self.moving == True:
-            self.rect.move_ip(self.speed, 0)
-            if self.speed > 0 and self.rect.left > W:
-                self.rect.right = 0
-            if self.speed < 0 and self.rect.right < 0:
-                self.rect.left = W
+        self.pace_count += 1
+        self.rect.x += self.direction * self.pace_size
+        if self.pace_count >= self.turn_after:
+            self.direction *= -1
+            self.pace_count = 0
+        if self.rect.x <= 0:
+            self.direction = 1
+            self.pace_count = 0
+        elif self.rect.x >= W:
+            self.direction = -1
+            self.pace_count = 0
 
     def random(self):
         self.rect.x = random.randrange(0, W - self.rect.width)
